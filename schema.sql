@@ -67,3 +67,4 @@ CREATE TABLE FlightLogs (
     PersonID INT FOREIGN KEY REFERENCES People(PersonID),
     Notes TEXT
 );
+SELECT TOP 10 * FROM People;
