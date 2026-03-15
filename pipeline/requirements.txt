@@ -1,0 +1,7 @@
+anthropic
+pyodbc
+sqlalchemy
+pandas
+streamlit
+pdfplumber
+pymupdf
