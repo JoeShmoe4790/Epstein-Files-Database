@@ -54,3 +54,31 @@ for r in relationships:
 conn2.commit()
 print("Relationships imported successfully")
 conn2.close()
+# Import flight data
+conn3 = pyodbc.connect(DB_CONNECTION)
+cursor3 = conn3.cursor()
+
+with open('../Epstein-research-data/knowledge_graph_relationships.json', encoding='utf-8') as f:
+    relationships = json.load(f)
+
+flights = [r for r in relationships if 'traveled_with' in r.get('relationship_type', '')]
+
+print(f"Importing {len(flights)} flight records...")
+
+for f in flights:
+    metadata = json.loads(f.get('metadata', '{}'))
+    sample_dates = metadata.get('sample_dates', [])
+    
+    for date in sample_dates:
+        cursor3.execute("""
+            INSERT INTO FlightLogs (FlightDate, PersonID, Notes)
+            VALUES (?, ?, ?)
+        """,
+        date,
+        f.get('source_entity_id'),
+        f'Traveled with entity {f.get("target_entity_id")}. Total shared flights: {metadata.get("shared_flight_count")}'
+        )
+
+conn3.commit()
+print("Flight logs imported successfully")
+conn3.close()
